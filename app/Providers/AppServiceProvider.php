@@ -7,25 +7,17 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
-     *
-     * @return void
+     * Register any application services.
      */
-    public function boot()
+    public function register(): void
     {
         //
-        
-        \Validator::extend('cek_passwordlama', function ($attribute, $value, $parameters) {
-            return \Hash::check($value, $parameters[0]);
-});
     }
 
     /**
-     * Register any application services.
-     *
-     * @return void
+     * Bootstrap any application services.
      */
-    public function register()
+    public function boot(): void
     {
         //
     }
