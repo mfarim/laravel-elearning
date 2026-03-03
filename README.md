@@ -58,6 +58,51 @@ Exam Page → Confirmation → Exam Mode
 
 ---
 
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login Page](screenshots/login.png)
+
+### 👨‍💼 Admin Panel
+
+| Dashboard | Teachers Management |
+|:---------:|:-------------------:|
+| ![Admin Dashboard](screenshots/admin-dashboard.png) | ![Teachers](screenshots/admin-teachers.png) |
+
+| Students Management | Classrooms Management |
+|:-------------------:|:---------------------:|
+| ![Students](screenshots/admin-students.png) | ![Classrooms](screenshots/admin-classrooms.png) |
+
+| Subjects Management | Announcements |
+|:-------------------:|:-------------:|
+| ![Subjects](screenshots/admin-subjects.png) | ![Announcements](screenshots/admin-announcements.png) |
+
+### 👨‍🏫 Teacher Panel
+
+| Dashboard | Materials |
+|:---------:|:---------:|
+| ![Teacher Dashboard](screenshots/teacher-dashboard.png) | ![Materials](screenshots/teacher-materials.png) |
+
+| Assignments | CBT Exams |
+|:-----------:|:---------:|
+| ![Assignments](screenshots/teacher-assignments.png) | ![Exams](screenshots/teacher-exams.png) |
+
+| Question Bank |
+|:-------------:|
+| ![Question Bank](screenshots/teacher-questions.png) |
+
+### 👨‍🎓 Student Panel (Mobile-First)
+
+| Dashboard | Materials | Assignments |
+|:---------:|:---------:|:-----------:|
+| ![Student Dashboard](screenshots/student-dashboard.png) | ![Materials](screenshots/student-materials.png) | ![Assignments](screenshots/student-assignments.png) |
+
+| Exams | Grades |
+|:-----:|:------:|
+| ![Exams](screenshots/student-exams.png) | ![Grades](screenshots/student-grades.png) |
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |

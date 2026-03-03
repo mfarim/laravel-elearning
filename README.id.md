@@ -58,6 +58,51 @@ Halaman Ujian → Konfirmasi → Mode Ujian
 
 ---
 
+## 📸 Tangkapan Layar
+
+### 🔐 Halaman Login
+![Halaman Login](screenshots/login.png)
+
+### 👨‍💼 Panel Admin
+
+| Dashboard | Manajemen Guru |
+|:---------:|:--------------:|
+| ![Dashboard Admin](screenshots/admin-dashboard.png) | ![Guru](screenshots/admin-teachers.png) |
+
+| Manajemen Siswa | Manajemen Kelas |
+|:---------------:|:---------------:|
+| ![Siswa](screenshots/admin-students.png) | ![Kelas](screenshots/admin-classrooms.png) |
+
+| Manajemen Mata Pelajaran | Pengumuman |
+|:------------------------:|:----------:|
+| ![Mapel](screenshots/admin-subjects.png) | ![Pengumuman](screenshots/admin-announcements.png) |
+
+### 👨‍🏫 Panel Guru
+
+| Dashboard | Materi Pembelajaran |
+|:---------:|:-------------------:|
+| ![Dashboard Guru](screenshots/teacher-dashboard.png) | ![Materi](screenshots/teacher-materials.png) |
+
+| Tugas | Ujian CBT |
+|:-----:|:---------:|
+| ![Tugas](screenshots/teacher-assignments.png) | ![Ujian](screenshots/teacher-exams.png) |
+
+| Bank Soal |
+|:---------:|
+| ![Bank Soal](screenshots/teacher-questions.png) |
+
+### 👨‍🎓 Panel Siswa (Desain Mobile-First)
+
+| Beranda | Materi | Tugas |
+|:-------:|:------:|:-----:|
+| ![Beranda Siswa](screenshots/student-dashboard.png) | ![Materi](screenshots/student-materials.png) | ![Tugas](screenshots/student-assignments.png) |
+
+| Ujian | Nilai |
+|:-----:|:-----:|
+| ![Ujian](screenshots/student-exams.png) | ![Nilai](screenshots/student-grades.png) |
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Teknologi |
