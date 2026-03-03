@@ -217,8 +217,6 @@ Setelah menjalankan `migrate:fresh --seed`:
 composer test
 ```
 
-Lihat [docs/TESTING.md](docs/TESTING.md) untuk panduan testing manual secara lengkap.
-
 ---
 
 ## 📂 Struktur Folder Utama
@@ -242,9 +240,7 @@ routes/
 ├── student.php                # Route siswa
 ├── channels.php               # Otorisasi broadcast channel
 docs/
-├── REVERB-PRODUCTION.md       # Panduan deployment production Reverb
-├── SECURITY-AUDIT.md          # Dokumentasi audit keamanan
-└── TESTING.md                 # Panduan testing manual
+└── REVERB-PRODUCTION.md       # Panduan deployment production Reverb
 ```
 
 ---

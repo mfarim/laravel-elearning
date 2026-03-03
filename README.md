@@ -217,8 +217,6 @@ After running `migrate:fresh --seed`:
 composer test
 ```
 
-See [docs/TESTING.md](docs/TESTING.md) for complete manual testing guide.
-
 ---
 
 ## 📂 Project Structure
@@ -242,9 +240,7 @@ routes/
 ├── student.php                # Student routes
 ├── channels.php               # Broadcast channel authorization
 docs/
-├── REVERB-PRODUCTION.md       # Production deployment guide for Reverb
-├── SECURITY-AUDIT.md          # Security audit documentation
-└── TESTING.md                 # Manual testing guide
+└── REVERB-PRODUCTION.md       # Production deployment guide for Reverb
 ```
 
 ---
