@@ -1,12 +1,12 @@
 # 📚 Laravel E-Learning & CBT Platform
 
-[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
 [![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?style=flat-square&logo=livewire&logoColor=white)](https://livewire.laravel.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 > 🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
 
-A full-featured web-based **E-Learning** and **Computer Based Test (CBT)** platform for managing learning activities between **Admin**, **Teacher**, and **Student**. Built with Laravel 12, Livewire 3, and Laravel Reverb for real-time features.
+A full-featured web-based **E-Learning** and **Computer Based Test (CBT)** platform for managing learning activities between **Admin**, **Teacher**, and **Student**. Built with Laravel 13, Livewire 3, and Laravel Reverb for real-time features.
 
 ---
 
@@ -107,7 +107,7 @@ Exam Page → Confirmation → Exam Mode
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | PHP 8.2+, Laravel 12 |
+| **Backend** | PHP 8.3+, Laravel 13 |
 | **Frontend** | Livewire 3, Volt, Alpine.js, Tailwind CSS 3 |
 | **Real-time** | Laravel Reverb (WebSocket) |
 | **Database** | MySQL / SQLite |
@@ -167,7 +167,7 @@ Only authorized users can subscribe:
 ## 🚀 Installation
 
 ### Prerequisites
-- PHP 8.2+
+- PHP 8.3+
 - Composer
 - Node.js 18+
 - MySQL (or SQLite for development)

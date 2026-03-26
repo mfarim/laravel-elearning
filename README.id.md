@@ -1,12 +1,12 @@
 # 📚 Laravel E-Learning & CBT Platform
 
-[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
 [![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?style=flat-square&logo=livewire&logoColor=white)](https://livewire.laravel.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 > 🇬🇧 [Read in English](README.md)
 
-Platform **E-Learning** dan **Computer Based Test (CBT)** berbasis web untuk manajemen pembelajaran antara **Admin**, **Guru**, dan **Siswa**. Dibangun menggunakan Laravel 12, Livewire 3, dan Laravel Reverb untuk fitur real-time.
+Platform **E-Learning** dan **Computer Based Test (CBT)** berbasis web untuk manajemen pembelajaran antara **Admin**, **Guru**, dan **Siswa**. Dibangun menggunakan Laravel 13, Livewire 3, dan Laravel Reverb untuk fitur real-time.
 
 ---
 
@@ -107,7 +107,7 @@ Halaman Ujian → Konfirmasi → Mode Ujian
 
 | Layer | Teknologi |
 |-------|-----------|
-| **Backend** | PHP 8.2+, Laravel 12 |
+| **Backend** | PHP 8.3+, Laravel 13 |
 | **Frontend** | Livewire 3, Volt, Alpine.js, Tailwind CSS 3 |
 | **Real-time** | Laravel Reverb (WebSocket) |
 | **Database** | MySQL / SQLite |
@@ -167,7 +167,7 @@ Hanya pengguna yang berhak yang bisa subscribe:
 ## 🚀 Instalasi
 
 ### Prasyarat
-- PHP 8.2+
+- PHP 8.3+
 - Composer
 - Node.js 18+
 - MySQL (atau SQLite untuk development)
