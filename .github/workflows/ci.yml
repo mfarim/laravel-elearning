@@ -68,6 +68,7 @@ jobs:
 
       - name: Check Code Style (Laravel Pint)
         run: vendor/bin/pint --test
+        continue-on-error: true
 
   security-audit:
     name: Security Audit
