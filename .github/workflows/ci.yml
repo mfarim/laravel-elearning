@@ -1,0 +1,133 @@
+name: CI & Security
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 2 * * 1' # Runs weekly on Monday at 02:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, sqlite, pdo_sqlite, bcmath, curl, zip
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Install NPM Dependencies
+        run: npm ci || npm install
+
+      - name: Build Frontend Assets (Vite)
+        run: npm run build
+
+      - name: Setup Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Database Migrations
+        run: php artisan migrate --force
+
+      - name: Run PHPUnit Tests
+        run: php artisan test
+
+      - name: Check Code Style (Laravel Pint)
+        run: vendor/bin/pint --test
+        continue-on-error: true
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Audit PHP Dependencies (Composer Audit)
+        id: composer-audit
+        continue-on-error: true
+        run: |
+          echo "### 🔒 Composer Security Audit" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          composer audit --locked --format=plain >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          composer audit --locked
+
+      - name: Audit NPM Dependencies (NPM Audit)
+        id: npm-audit
+        continue-on-error: true
+        run: |
+          echo "### 🔒 NPM Security Audit" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=high >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=high
+
+      - name: Scan for Sensitive Files & Secrets
+        run: |
+          echo "### 🛡️ Secret & Sensitive File Scan" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for forbidden sensitive files in repository
+          SENSITIVE_FILES=$(git ls-files | grep -E "(^|/)(\.env(\.(local|production|staging|testing))?|.*\.pem|.*\.key|id_rsa|id_ed25519)$" | grep -v "\.example" || true)
+
+          if [ -z "$SENSITIVE_FILES" ]; then
+            echo "✅ No committed sensitive files or private keys found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Security issue: Sensitive file(s) found in repository:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$SENSITIVE_FILES" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Dependency Review (Pull Requests Only)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        continue-on-error: true

@@ -15,10 +15,21 @@ class Exams extends Component
     $studentId = $student?->id;
 
     $upcomingExams = $classroomId
-      ? Examination::with('subject')
+      ? Examination::with(['subject', 'attempts' => fn($q) => $q->where('student_id', $studentId)->latest()])
         ->where('classroom_id', $classroomId)
         ->where('status', 'published')
         ->where('end_at', '>', now())
+        ->where(function ($query) use ($studentId) {
+          $query->where('allow_retry', true)
+            ->orWhereDoesntHave('attempts', function ($q) use ($studentId) {
+              $q->where('student_id', $studentId)
+                ->whereIn('status', ['completed', 'needs_grading', 'force_finished']);
+            })
+            ->orWhereHas('attempts', function ($q) use ($studentId) {
+              $q->where('student_id', $studentId)
+                ->where('status', 'in_progress');
+            });
+        })
         ->orderBy('start_at')
         ->get()
       : collect();
@@ -26,7 +37,7 @@ class Exams extends Component
     $pastAttempts = $studentId
       ? ExamAttempt::with('examination.subject')
         ->where('student_id', $studentId)
-        ->where('status', 'completed')
+        ->whereIn('status', ['completed', 'needs_grading', 'force_finished'])
         ->latest()->take(10)->get()
       : collect();
 

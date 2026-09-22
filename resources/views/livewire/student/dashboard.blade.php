@@ -14,12 +14,49 @@
               <span
                 class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800">{{ strtoupper($exam->type) }}</span>
             </div>
-            <div class="mt-3 flex items-center gap-2 text-xs text-gray-500">
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-              </svg>
-              {{ $exam->start_at->format('d M Y, H:i') }}
+            <div class="mt-3 flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                </svg>
+                {{ $exam->start_at->format('d M Y, H:i') }}
+              </div>
+
+              @php
+                $latestAttempt = $exam->attempts->first();
+              @endphp
+
+              @if($latestAttempt && $latestAttempt->status === 'in_progress')
+                <a href="{{ route('student.exam.start', $exam->id) }}"
+                  class="inline-flex items-center rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-600 transition">
+                  Lanjutkan Ujian →
+                </a>
+              @elseif($latestAttempt && in_array($latestAttempt->status, ['completed', 'needs_grading', 'force_finished']))
+                @if($exam->allow_retry && $exam->start_at->isPast() && $exam->end_at->isFuture())
+                  <a href="{{ route('student.exam.start', $exam->id) }}"
+                    class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-500 transition">
+                    Ulangi Ujian →
+                  </a>
+                @elseif($latestAttempt->status === 'needs_grading')
+                  <span class="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-800">
+                    ⏳ Menunggu Penilaian
+                  </span>
+                @else
+                  <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">
+                    ✓ Selesai ({{ $latestAttempt->score }})
+                  </span>
+                @endif
+              @elseif($exam->start_at->isPast() && $exam->end_at->isFuture())
+                <a href="{{ route('student.exam.start', $exam->id) }}"
+                  class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-500 transition">
+                  Mulai Ujian →
+                </a>
+              @elseif($exam->start_at->isFuture())
+                <span class="text-xs text-gray-400 italic">Belum dimulai</span>
+              @else
+                <span class="text-xs text-gray-400 italic">Sudah berakhir</span>
+              @endif
             </div>
           </div>
         @endforeach

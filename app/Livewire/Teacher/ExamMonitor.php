@@ -49,7 +49,7 @@ class ExamMonitor extends Component
                 'finished_at' => $attempt?->finished_at,
                 'violations' => $attempt?->violations ?? 0,
             ];
-        })->sortBy(fn ($m) => ['mengerjakan' => 0, 'belum_mulai' => 1, 'selesai' => 2][$m->status]);
+        })->sortBy(fn ($m) => ['mengerjakan' => 0, 'perlu_dinilai' => 1, 'belum_mulai' => 2, 'selesai' => 3][$m->status] ?? 99);
 
         $stats = (object)[
             'total' => $students->count(),

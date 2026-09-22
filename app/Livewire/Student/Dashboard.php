@@ -14,10 +14,18 @@ class Dashboard extends Component
         $student = auth()->user()->student;
         $classroomId = $student?->classroom_id;
 
+        $studentId = $student?->id;
+
         return view('livewire.student.dashboard', [
             'student' => $student,
             'upcomingExams' => $classroomId
-                ? Examination::where('classroom_id', $classroomId)->where('status', 'published')->where('start_at', '>', now())->orderBy('start_at')->take(3)->get()
+                ? Examination::with(['subject', 'attempts' => fn ($q) => $q->where('student_id', $studentId)->latest()])
+                    ->where('classroom_id', $classroomId)
+                    ->where('status', 'published')
+                    ->where('end_at', '>', now())
+                    ->orderBy('start_at')
+                    ->take(5)
+                    ->get()
                 : collect(),
             'activeAssignments' => $classroomId
                 ? Assignment::where('classroom_id', $classroomId)->where('status', 'published')->where('due_date', '>', now())->orderBy('due_date')->take(5)->get()
