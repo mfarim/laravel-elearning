@@ -30,12 +30,23 @@
           <div class="text-xs text-gray-500">
             📅 {{ $exam->start_at->format('d M H:i') }} — {{ $exam->end_at->format('H:i') }}
           </div>
-          @if($exam->start_at->isPast() && $exam->end_at->isFuture())
+          @php
+            $latestAttempt = $exam->attempts->first();
+          @endphp
+
+          @if($latestAttempt && $latestAttempt->status === 'in_progress')
             <a href="{{ route('student.exam.start', $exam->id) }}"
-              class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500">Mulai
-              Ujian →</a>
-          @else
+              class="inline-flex items-center rounded-lg bg-amber-500 px-4 py-2 text-xs font-bold text-white hover:bg-amber-600 transition">Lanjutkan Ujian →</a>
+          @elseif($latestAttempt && in_array($latestAttempt->status, ['completed', 'needs_grading', 'force_finished']) && $exam->allow_retry && $exam->start_at->isPast() && $exam->end_at->isFuture())
+            <a href="{{ route('student.exam.start', $exam->id) }}"
+              class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 transition">Ulangi Ujian →</a>
+          @elseif($exam->start_at->isPast() && $exam->end_at->isFuture())
+            <a href="{{ route('student.exam.start', $exam->id) }}"
+              class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 transition">Mulai Ujian →</a>
+          @elseif($exam->start_at->isFuture())
             <span class="text-xs text-gray-400 italic">Belum dimulai</span>
+          @else
+            <span class="text-xs text-gray-400 italic">Sudah berakhir</span>
           @endif
         </div>
       </div>
@@ -58,10 +69,16 @@
                 {{ $attempt->finished_at?->format('d M Y') }}</p>
             </div>
             <div class="text-right">
-              <p class="text-lg font-bold {{ $attempt->is_passed ? 'text-green-600' : 'text-red-600' }}">
-                {{ $attempt->score }}</p>
-              <span
-                class="text-xs {{ $attempt->is_passed ? 'text-green-600' : 'text-red-600' }}">{{ $attempt->is_passed ? '✓ Lulus' : '✗ Belum lulus' }}</span>
+              @if($attempt->status === 'needs_grading')
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold bg-orange-100 text-orange-800">
+                  ⏳ Menunggu Penilaian
+                </span>
+              @else
+                <p class="text-lg font-bold {{ $attempt->is_passed ? 'text-green-600' : 'text-red-600' }}">
+                  {{ $attempt->score }}</p>
+                <span
+                  class="text-xs {{ $attempt->is_passed ? 'text-green-600' : 'text-red-600' }}">{{ $attempt->is_passed ? '✓ Lulus' : '✗ Belum lulus' }}</span>
+              @endif
             </div>
           </div>
         </div>
