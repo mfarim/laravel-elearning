@@ -20,42 +20,142 @@ class ExamStart extends Component
   public function mount(Examination $examination): void
   {
     $this->examination = $examination;
-    $student = auth()->user()->student;
+    $student = auth()->user()?->student;
 
-    // Check existing attempt
-    $this->attempt = ExamAttempt::where('examination_id', $examination->id)
+    if (!$student || $this->examination->classroom_id !== $student->classroom_id) {
+      session()->flash('error', 'Anda tidak memiliki akses ke ujian ini.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    if ($this->examination->status !== 'published') {
+      session()->flash('error', 'Ujian belum dipublikasikan atau sudah ditutup.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    if (now()->lt($this->examination->start_at)) {
+      session()->flash('error', 'Ujian belum dimulai. Jadwal mulai: ' . $this->examination->start_at->format('d M Y H:i'));
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    if (now()->gt($this->examination->end_at)) {
+      session()->flash('error', 'Waktu ujian telah berakhir pada ' . $this->examination->end_at->format('d M Y H:i'));
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    // Check existing in_progress attempt
+    $this->attempt = ExamAttempt::where('examination_id', $this->examination->id)
       ->where('student_id', $student->id)
       ->where('status', 'in_progress')
       ->first();
 
     if ($this->attempt) {
+      $durationDeadline = $this->attempt->started_at->copy()->addMinutes($this->examination->duration_minutes);
+      $deadline = $durationDeadline->lt($this->examination->end_at) ? $durationDeadline : $this->examination->end_at;
+
+      if (now()->gte($deadline)) {
+        $this->finishExam();
+        return;
+      }
+
       $this->examStarted = true;
       $this->loadAnswers();
+      return;
+    }
+
+    // Check if student has already completed attempts and retry is not allowed
+    $finishedAttemptsCount = ExamAttempt::where('examination_id', $this->examination->id)
+      ->where('student_id', $student->id)
+      ->whereIn('status', ['completed', 'needs_grading', 'force_finished'])
+      ->count();
+
+    if ($finishedAttemptsCount > 0 && !$this->examination->allow_retry) {
+      session()->flash('error', 'Anda sudah menyelesaikan ujian ini dan tidak dapat mengulang.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
     }
   }
 
   public function startExam(): void
   {
-    $student = auth()->user()->student;
+    $student = auth()->user()?->student;
+
+    if (!$student || $this->examination->classroom_id !== $student->classroom_id) {
+      session()->flash('error', 'Anda tidak memiliki akses ke ujian ini.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    if ($this->examination->status !== 'published') {
+      session()->flash('error', 'Ujian belum dipublikasikan atau sudah ditutup.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    if (now()->lt($this->examination->start_at) || now()->gt($this->examination->end_at)) {
+      session()->flash('error', 'Waktu pelaksanaan ujian tidak valid atau telah berakhir.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    // Resume existing attempt if present
+    $existing = ExamAttempt::where('examination_id', $this->examination->id)
+      ->where('student_id', $student->id)
+      ->where('status', 'in_progress')
+      ->first();
+
+    if ($existing) {
+      $this->attempt = $existing;
+      $this->examStarted = true;
+      $this->loadAnswers();
+      return;
+    }
+
+    // Verify retry allowance
+    $finishedAttemptsCount = ExamAttempt::where('examination_id', $this->examination->id)
+      ->where('student_id', $student->id)
+      ->whereIn('status', ['completed', 'needs_grading', 'force_finished'])
+      ->count();
+
+    if ($finishedAttemptsCount > 0 && !$this->examination->allow_retry) {
+      session()->flash('error', 'Anda sudah menyelesaikan ujian ini dan tidak dapat mengulang.');
+      $this->redirect(route('student.exams'), navigate: true);
+      return;
+    }
+
+    $attemptNumber = ExamAttempt::where('examination_id', $this->examination->id)
+      ->where('student_id', $student->id)
+      ->count() + 1;
+
     $this->attempt = ExamAttempt::create([
       'examination_id' => $this->examination->id,
       'student_id' => $student->id,
       'started_at' => now(),
-      'attempt_number' => ExamAttempt::where('examination_id', $this->examination->id)->where('student_id', $student->id)->count() + 1,
+      'attempt_number' => $attemptNumber,
       'status' => 'in_progress',
     ]);
+
     $this->examStarted = true;
     $this->loadAnswers();
   }
 
   public function loadAnswers(): void
   {
-    $existingAnswers = ExamAnswer::where('exam_attempt_id', $this->attempt->id)->pluck('answer_text', 'question_id')->toArray();
+    if (!$this->attempt) return;
+
+    $existingAnswers = ExamAnswer::where('exam_attempt_id', $this->attempt->id)
+      ->pluck('answer_text', 'question_id')
+      ->toArray();
     $this->answers = $existingAnswers;
   }
 
   public function saveAnswer(int $questionId, string $answer): void
   {
+    if (!$this->attempt) return;
+
     $this->answers[$questionId] = $answer;
 
     ExamAnswer::updateOrCreate(
@@ -100,8 +200,12 @@ class ExamStart extends Component
     $this->finishExam();
   }
 
-  public function finishExam()
+  public function finishExam(): void
   {
+    if (!$this->attempt) {
+      return;
+    }
+
     $questions = $this->examination->questions;
     $totalPoints = 0;
     $earnedPoints = 0;
@@ -113,31 +217,51 @@ class ExamStart extends Component
 
       if ($q->question_type === 'essay') {
         $hasEssay = true;
-        // Essay: don't auto-grade, leave points_earned = 0
-      } elseif ($answer && $q->question_type === 'multiple_choice') {
-        $isCorrect = strtoupper(trim($answer)) === strtoupper(trim($q->correct_answer ?? ''));
-        ExamAnswer::where('exam_attempt_id', $this->attempt->id)
-          ->where('question_id', $q->id)
-          ->update(['is_correct' => $isCorrect, 'points_earned' => $isCorrect ? $q->points : 0]);
-        if ($isCorrect)
+        ExamAnswer::updateOrCreate(
+          ['exam_attempt_id' => $this->attempt->id, 'question_id' => $q->id],
+          [
+            'answer_text' => $answer,
+            'answered_at' => ($answer !== null && $answer !== '') ? now() : null,
+            'points_earned' => 0,
+            'is_correct' => null,
+          ]
+        );
+      } elseif ($q->question_type === 'multiple_choice') {
+        $isCorrect = ($answer !== null && $answer !== '') && (strtoupper(trim($answer)) === strtoupper(trim($q->correct_answer ?? '')));
+        $pointsEarned = $isCorrect ? $q->points : 0;
+        ExamAnswer::updateOrCreate(
+          ['exam_attempt_id' => $this->attempt->id, 'question_id' => $q->id],
+          [
+            'answer_text' => $answer,
+            'answered_at' => ($answer !== null && $answer !== '') ? now() : null,
+            'is_correct' => $isCorrect,
+            'points_earned' => $pointsEarned,
+          ]
+        );
+        if ($isCorrect) {
           $earnedPoints += $q->points;
+        }
       }
     }
 
-    // If has essay, calculate score from PG only and set needs_grading
-    $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100) : 0;
-    $status = $hasEssay ? 'needs_grading' : 'completed';
+    if ($hasEssay) {
+      $status = 'needs_grading';
+      $score = null;
+      $isPassed = false;
+      $message = "Ujian selesai! Soal essay akan dinilai oleh guru.";
+    } else {
+      $status = 'completed';
+      $score = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100) : 0;
+      $isPassed = $score >= $this->examination->passing_score;
+      $message = "Ujian selesai! Nilai Anda: {$score}";
+    }
 
     $this->attempt->update([
       'finished_at' => now(),
       'score' => $score,
-      'is_passed' => $score >= $this->examination->passing_score,
+      'is_passed' => $isPassed,
       'status' => $status,
     ]);
-
-    $message = $hasEssay
-      ? "Ujian selesai! Soal essay akan dinilai oleh guru."
-      : "Ujian selesai! Nilai Anda: {$score}";
 
     session()->flash('success', $message);
     $this->redirect(route('student.exams'), navigate: true);
@@ -147,13 +271,14 @@ class ExamStart extends Component
   {
     $questions = $this->examination->questions()->orderBy('id')->get();
     $currentQuestion = $questions[$this->currentIndex] ?? null;
-    $answeredCount = count(array_filter($this->answers));
+    $answeredCount = count(array_filter($this->answers, fn($ans) => $ans !== null && $ans !== ''));
 
     // Calculate remaining seconds for timer
     $remainingSeconds = 0;
     if ($this->attempt && $this->attempt->started_at) {
-      $deadline = $this->attempt->started_at->addMinutes($this->examination->duration_minutes);
-      $remainingSeconds = max(0, $deadline->diffInSeconds(now(), false) * -1);
+      $durationDeadline = $this->attempt->started_at->copy()->addMinutes($this->examination->duration_minutes);
+      $deadline = $durationDeadline->lt($this->examination->end_at) ? $durationDeadline : $this->examination->end_at;
+      $remainingSeconds = max(0, $deadline->timestamp - now()->timestamp);
     }
 
     return view('livewire.student.exam-start', compact('questions', 'currentQuestion', 'answeredCount', 'remainingSeconds'))

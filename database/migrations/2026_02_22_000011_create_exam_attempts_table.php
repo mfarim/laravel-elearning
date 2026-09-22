@@ -17,7 +17,7 @@ return new class extends Migration {
       $table->boolean('is_passed')->default(false);
       $table->boolean('is_force_finished')->default(false);
       $table->integer('attempt_number')->default(1);
-      $table->enum('status', ['in_progress', 'completed', 'force_finished'])->default('in_progress');
+      $table->enum('status', ['in_progress', 'completed', 'needs_grading', 'force_finished'])->default('in_progress');
       $table->timestamps();
     });
   }
