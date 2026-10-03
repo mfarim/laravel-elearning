@@ -6,10 +6,12 @@ use App\Events\DiscussionMessageDeleted;
 use App\Events\DiscussionMessageSent;
 use App\Models\Assignment;
 use App\Models\AssignmentDiscussion;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AssignmentDiscussionTeacher extends Component
 {
+  #[Locked]
   public int $assignmentId;
   public string $message = '';
   public ?int $replyingTo = null;
@@ -17,7 +19,9 @@ class AssignmentDiscussionTeacher extends Component
 
   public function mount(int $assignmentId): void
   {
-    $this->assignmentId = $assignmentId;
+    $teacherId = auth()->user()->teacher?->id;
+    $assignment = Assignment::where('teacher_id', $teacherId)->findOrFail($assignmentId);
+    $this->assignmentId = $assignment->id;
   }
 
   /**
@@ -70,16 +74,27 @@ class AssignmentDiscussionTeacher extends Component
 
   public function deleteMessage(): void
   {
-    AssignmentDiscussion::where('id', $this->deletingMessageId)->delete();
+    $teacherId = auth()->user()->teacher?->id;
+    $message = AssignmentDiscussion::where('assignment_id', $this->assignmentId)
+      ->whereHas('assignment', fn ($q) => $q->where('teacher_id', $teacherId))
+      ->where('id', $this->deletingMessageId)
+      ->first();
 
-    broadcast(new DiscussionMessageDeleted($this->assignmentId, $this->deletingMessageId))->toOthers();
+    if ($message) {
+      $deletedId = $message->id;
+      $message->delete();
+      broadcast(new DiscussionMessageDeleted($this->assignmentId, $deletedId))->toOthers();
+    }
 
     $this->deletingMessageId = null;
   }
 
   public function render()
   {
-    $assignment = Assignment::with(['subject', 'classroom'])->findOrFail($this->assignmentId);
+    $teacherId = auth()->user()->teacher?->id;
+    $assignment = Assignment::with(['subject', 'classroom'])
+      ->where('teacher_id', $teacherId)
+      ->findOrFail($this->assignmentId);
     $discussions = AssignmentDiscussion::with(['user', 'replies.user'])
       ->where('assignment_id', $this->assignmentId)
       ->whereNull('parent_id')

@@ -28,6 +28,6 @@ Route::middleware(['auth', CheckBlockedUser::class, RoleMiddleware::class . ':gu
     Route::get('/exams', ExamIndex::class)->name('exams.index');
     Route::get('/exams/{examination}/monitor', ExamMonitor::class)->name('exams.monitor');
     Route::get('/exams/{examination}/print', ExamPrint::class)->name('exams.print');
-    Route::get('/exams/{examination}/grade/{attempt}', ExamGrading::class)->name('exams.grade');
+    Route::get('/exams/{examination}/grade/{attempt}', ExamGrading::class)->scopeBindings()->name('exams.grade');
     Route::get('/questions', QuestionIndex::class)->name('questions.index');
   });

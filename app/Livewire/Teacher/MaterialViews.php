@@ -5,20 +5,27 @@ namespace App\Livewire\Teacher;
 use App\Models\LearningMaterial;
 use App\Models\MaterialView;
 use App\Models\Student;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MaterialViews extends Component
 {
+    #[Locked]
     public int $materialId;
 
     public function mount(int $materialId): void
     {
-        $this->materialId = $materialId;
+        $teacherId = auth()->user()->teacher?->id;
+        $material = LearningMaterial::where('teacher_id', $teacherId)->findOrFail($materialId);
+        $this->materialId = $material->id;
     }
 
     public function render()
     {
-        $material = LearningMaterial::with(['subject', 'classroom'])->findOrFail($this->materialId);
+        $teacherId = auth()->user()->teacher?->id;
+        $material = LearningMaterial::with(['subject', 'classroom'])
+            ->where('teacher_id', $teacherId)
+            ->findOrFail($this->materialId);
         $classroomId = $material->classroom_id;
 
         $students = Student::with('user')

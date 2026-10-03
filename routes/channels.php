@@ -14,9 +14,13 @@ Broadcast::channel('assignment.{assignmentId}.discussion', function ($user, $ass
         return false;
     }
 
-    // Guru yang mengajar mata pelajaran terkait
-    if ($user->hasRole('guru')) {
+    if ($user->hasRole('admin')) {
         return true;
+    }
+
+    // Guru yang membuat assignment
+    if ($user->hasRole('guru')) {
+        return (int) $user->teacher?->id === (int) $assignment->teacher_id;
     }
 
     // Siswa yang berada di kelas assignment

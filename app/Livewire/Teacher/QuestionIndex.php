@@ -59,7 +59,8 @@ class QuestionIndex extends Component
 
     public function edit(int $id): void
     {
-        $q = Question::findOrFail($id);
+        $teacherId = auth()->user()->teacher?->id;
+        $q = Question::whereHas('examination', fn ($query) => $query->where('teacher_id', $teacherId))->findOrFail($id);
         $this->editingId = $id;
         $this->examination_id = (string)$q->examination_id;
         $this->question_text = $q->question_text;
@@ -75,8 +76,12 @@ class QuestionIndex extends Component
     public function save(): void
     {
         $this->validate();
+        $teacherId = auth()->user()->teacher?->id;
+        // Verify examination belongs to logged-in teacher
+        $exam = Examination::where('teacher_id', $teacherId)->findOrFail($this->examination_id);
+
         $data = [
-            'examination_id' => $this->examination_id, 'question_text' => $this->question_text,
+            'examination_id' => $exam->id, 'question_text' => $this->question_text,
             'question_type' => $this->question_type,
             'options' => $this->question_type === 'multiple_choice' ? array_filter($this->options) : null,
             'correct_answer' => $this->correct_answer ?: null,
@@ -84,7 +89,7 @@ class QuestionIndex extends Component
             'points' => $this->points, 'difficulty' => $this->difficulty,
         ];
         if ($this->editingId) {
-            Question::findOrFail($this->editingId)->update($data);
+            Question::whereHas('examination', fn ($query) => $query->where('teacher_id', $teacherId))->findOrFail($this->editingId)->update($data);
             session()->flash('success', 'Soal berhasil diperbarui.');
         } else {
             Question::create($data);
@@ -94,7 +99,13 @@ class QuestionIndex extends Component
     }
 
     public function confirmDelete(int $id): void { $this->deletingId = $id; $this->showDeleteModal = true; }
-    public function delete(): void { Question::findOrFail($this->deletingId)->delete(); $this->showDeleteModal = false; session()->flash('success', 'Soal berhasil dihapus.'); }
+    public function delete(): void
+    {
+        $teacherId = auth()->user()->teacher?->id;
+        Question::whereHas('examination', fn ($query) => $query->where('teacher_id', $teacherId))->findOrFail($this->deletingId)->delete();
+        $this->showDeleteModal = false;
+        session()->flash('success', 'Soal berhasil dihapus.');
+    }
 
     public function render()
     {
