@@ -5,11 +5,13 @@ namespace App\Livewire\Student;
 use App\Events\DiscussionMessageSent;
 use App\Models\Assignment;
 use App\Models\AssignmentDiscussion;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AssignmentDiscussionStudent extends Component
 {
+  #[Locked]
   public int $assignmentId;
   public string $message = '';
   public ?int $replyingTo = null;
@@ -17,13 +19,9 @@ class AssignmentDiscussionStudent extends Component
   public function mount(int $assignmentId): void
   {
     $assignment = Assignment::findOrFail($assignmentId);
-    $studentClassroomId = auth()->user()->student?->classroom_id;
+    $this->authorize('discuss', $assignment);
 
-    if ($assignment->classroom_id !== $studentClassroomId) {
-      abort(403, 'Anda tidak memiliki akses ke diskusi ini.');
-    }
-
-    $this->assignmentId = $assignmentId;
+    $this->assignmentId = $assignment->id;
   }
 
   /**
@@ -45,12 +43,21 @@ class AssignmentDiscussionStudent extends Component
   public function send(): void
   {
     $this->validate(['message' => 'required|string|max:2000']);
+    $assignment = Assignment::findOrFail($this->assignmentId);
+    $this->authorize('discuss', $assignment);
+
+    $parentValid = null;
+    if ($this->replyingTo) {
+      $parentValid = AssignmentDiscussion::where('assignment_id', $this->assignmentId)
+        ->where('id', $this->replyingTo)
+        ->value('id');
+    }
 
     $discussion = AssignmentDiscussion::create([
       'assignment_id' => $this->assignmentId,
       'user_id' => auth()->id(),
       'message' => $this->message,
-      'parent_id' => $this->replyingTo,
+      'parent_id' => $parentValid,
     ]);
 
     broadcast(new DiscussionMessageSent($this->assignmentId, $discussion->id))->toOthers();
@@ -61,7 +68,10 @@ class AssignmentDiscussionStudent extends Component
 
   public function reply(int $id): void
   {
-    $this->replyingTo = $id;
+    $exists = AssignmentDiscussion::where('assignment_id', $this->assignmentId)->where('id', $id)->exists();
+    if ($exists) {
+      $this->replyingTo = $id;
+    }
   }
 
   public function cancelReply(): void
