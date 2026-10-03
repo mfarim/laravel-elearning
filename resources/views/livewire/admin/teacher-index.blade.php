@@ -42,8 +42,10 @@
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-              <a href="/admin/impersonate/{{ $teacher->user_id }}" class="text-amber-600 hover:text-amber-900 mr-3"
-                title="Login sebagai guru ini">👤 Login</a>
+              <form method="POST" action="{{ route('admin.impersonate.start', $teacher->user_id) }}" class="inline">
+                @csrf
+                <button type="submit" class="text-amber-600 hover:text-amber-900 mr-3 cursor-pointer" title="Login sebagai guru ini">👤 Login</button>
+              </form>
               <button wire:click="edit({{ $teacher->id }})"
                 class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
               <button wire:click="confirmDelete({{ $teacher->id }})"

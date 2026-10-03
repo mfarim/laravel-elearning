@@ -43,8 +43,10 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $student->classroom?->name ?? '-' }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $student->gender }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-              <a href="/admin/impersonate/{{ $student->user_id }}" class="text-amber-600 hover:text-amber-900 mr-3"
-                title="Login sebagai siswa ini">👤 Login</a>
+              <form method="POST" action="{{ route('admin.impersonate.start', $student->user_id) }}" class="inline">
+                @csrf
+                <button type="submit" class="text-amber-600 hover:text-amber-900 mr-3 cursor-pointer" title="Login sebagai siswa ini">👤 Login</button>
+              </form>
               <button wire:click="edit({{ $student->id }})"
                 class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
               <button wire:click="confirmDelete({{ $student->id }})"

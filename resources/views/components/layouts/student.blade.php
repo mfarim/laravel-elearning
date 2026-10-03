@@ -15,10 +15,13 @@
     <div
       class="fixed top-0 left-0 right-0 z-[60] bg-amber-500 text-white text-center py-2 px-4 text-sm font-medium flex items-center justify-center gap-3">
       <span>⚠️ Anda sedang login sebagai <strong>{{ auth()->user()->name }}</strong> (mode impersonate)</span>
-      <a href="/admin/stop-impersonate"
-        class="inline-flex items-center gap-1 bg-white text-amber-700 px-3 py-1 rounded-md text-xs font-bold hover:bg-amber-50 transition">
-        ← Kembali ke Admin
-      </a>
+      <form method="POST" action="{{ route('impersonate.stop') }}" class="inline">
+        @csrf
+        <button type="submit"
+          class="inline-flex items-center gap-1 bg-white text-amber-700 px-3 py-1 rounded-md text-xs font-bold hover:bg-amber-50 transition cursor-pointer">
+          ← Kembali ke Admin
+        </button>
+      </form>
     </div>
     <div class="h-10"></div>
   @endif

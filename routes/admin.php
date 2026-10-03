@@ -22,6 +22,9 @@ Route::middleware(['auth', CheckBlockedUser::class, RoleMiddleware::class . ':ad
     Route::get('/subjects', SubjectIndex::class)->name('subjects.index');
     Route::get('/announcements', AnnouncementIndex::class)->name('announcements.index');
 
-    Route::get('/impersonate/{userId}', [ImpersonateController::class, 'start'])->name('impersonate.start');
-    Route::get('/stop-impersonate', [ImpersonateController::class, 'stop'])->name('impersonate.stop');
+    Route::post('/impersonate/{userId}', [ImpersonateController::class, 'start'])->name('impersonate.start');
   });
+
+Route::post('/admin/stop-impersonate', [ImpersonateController::class, 'stop'])
+  ->middleware(['auth'])
+  ->name('impersonate.stop');
