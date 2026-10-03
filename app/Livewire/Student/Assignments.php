@@ -4,6 +4,7 @@ namespace App\Livewire\Student;
 
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
@@ -13,6 +14,7 @@ class Assignments extends Component
   use WithPagination, WithFileUploads;
 
   public bool $showSubmit = false;
+  #[Locked]
   public ?int $submittingId = null;
   public string $notes = '';
   public $submission_file;
@@ -24,7 +26,10 @@ class Assignments extends Component
 
   public function openSubmit(int $assignmentId): void
   {
-    $this->submittingId = $assignmentId;
+    $assignment = Assignment::findOrFail($assignmentId);
+    $this->authorize('submit', $assignment);
+
+    $this->submittingId = $assignment->id;
     $this->notes = '';
     $this->submission_file = null;
     $this->showSubmit = true;
@@ -33,17 +38,25 @@ class Assignments extends Component
   public function submit(): void
   {
     $this->validate();
+    if (!$this->submittingId) {
+      return;
+    }
+    $assignment = Assignment::findOrFail($this->submittingId);
+    $this->authorize('submit', $assignment);
+
     $studentId = auth()->user()->student->id;
     $filePath = $this->submission_file->store('submissions', 'public');
-    AssignmentSubmission::create([
-      'assignment_id' => $this->submittingId,
-      'student_id' => $studentId,
-      'file_path' => $filePath,
-      'notes' => $this->notes ?: null,
-      'status' => 'submitted',
-      'submitted_at' => now(),
-    ]);
+    AssignmentSubmission::updateOrCreate(
+      ['assignment_id' => $assignment->id, 'student_id' => $studentId],
+      [
+        'file_path' => $filePath,
+        'notes' => $this->notes ?: null,
+        'status' => 'submitted',
+        'submitted_at' => now(),
+      ]
+    );
     $this->showSubmit = false;
+    $this->submittingId = null;
     session()->flash('success', 'Tugas berhasil dikumpulkan!');
   }
 

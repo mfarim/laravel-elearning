@@ -5,14 +5,17 @@ namespace App\Livewire\Teacher;
 use App\Models\ExamAttempt;
 use App\Models\Examination;
 use App\Models\Student;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ExamMonitor extends Component
 {
+    #[Locked]
     public Examination $examination;
 
     public function mount(Examination $examination): void
     {
+        $this->authorize('monitor', $examination);
         $this->examination = $examination;
     }
 

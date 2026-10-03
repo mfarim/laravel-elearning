@@ -5,16 +5,21 @@ namespace App\Livewire\Teacher;
 use App\Models\ExamAnswer;
 use App\Models\ExamAttempt;
 use App\Models\Examination;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ExamGrading extends Component
 {
+  #[Locked]
   public Examination $examination;
+  #[Locked]
   public ExamAttempt $attempt;
   public array $grades = [];
 
   public function mount(Examination $examination, ExamAttempt $attempt): void
   {
+    $this->authorize('grade', [$examination, $attempt]);
+
     $this->examination = $examination;
     $this->attempt = $attempt;
 
@@ -33,6 +38,8 @@ class ExamGrading extends Component
 
   public function saveGrades(): void
   {
+    $this->authorize('grade', [$this->examination, $this->attempt]);
+
     $essayQuestions = $this->examination->questions()
       ->where('question_type', 'essay')
       ->get();

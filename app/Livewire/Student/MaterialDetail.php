@@ -4,21 +4,26 @@ namespace App\Livewire\Student;
 
 use App\Models\LearningMaterial;
 use App\Models\MaterialView;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MaterialDetail extends Component
 {
+  #[Locked]
   public int $materialId;
 
   public function mount(int $materialId): void
   {
-    $this->materialId = $materialId;
+    $material = LearningMaterial::findOrFail($materialId);
+    $this->authorize('view', $material);
+
+    $this->materialId = $material->id;
 
     // Record view
     $studentId = auth()->user()->student?->id;
     if ($studentId) {
       MaterialView::firstOrCreate(
-        ['learning_material_id' => $materialId, 'student_id' => $studentId],
+        ['learning_material_id' => $material->id, 'student_id' => $studentId],
         ['viewed_at' => now()]
       );
     }
@@ -35,6 +40,7 @@ class MaterialDetail extends Component
   public function render()
   {
     $material = LearningMaterial::with(['subject', 'teacher.user'])->findOrFail($this->materialId);
+    $this->authorize('view', $material);
 
     return view('livewire.student.material-detail', [
       'material' => $material,

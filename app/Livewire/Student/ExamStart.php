@@ -6,11 +6,14 @@ use App\Models\ExamAnswer;
 use App\Models\ExamAttempt;
 use App\Models\Examination;
 use App\Models\Question;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ExamStart extends Component
 {
+  #[Locked]
   public Examination $examination;
+  #[Locked]
   public ?ExamAttempt $attempt = null;
   public int $currentIndex = 0;
   public array $answers = [];
@@ -154,7 +157,25 @@ class ExamStart extends Component
 
   public function saveAnswer(int $questionId, string $answer): void
   {
-    if (!$this->attempt) return;
+    if (!$this->attempt || $this->attempt->status !== 'in_progress') {
+      return;
+    }
+
+    // Verify time limit hasn't passed
+    if ($this->attempt->started_at) {
+      $durationDeadline = $this->attempt->started_at->copy()->addMinutes($this->examination->duration_minutes);
+      $deadline = $durationDeadline->lt($this->examination->end_at) ? $durationDeadline : $this->examination->end_at;
+      if (now()->gt($deadline)) {
+        $this->finishExam();
+        return;
+      }
+    }
+
+    // Verify question belongs to this examination
+    $validQuestion = $this->examination->questions()->where('id', $questionId)->exists();
+    if (!$validQuestion) {
+      return;
+    }
 
     $this->answers[$questionId] = $answer;
 
@@ -189,7 +210,7 @@ class ExamStart extends Component
 
   public function logViolation(): void
   {
-    if ($this->attempt) {
+    if ($this->attempt && $this->attempt->status === 'in_progress') {
       $this->attempt->increment('violations');
     }
   }
