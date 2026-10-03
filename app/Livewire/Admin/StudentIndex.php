@@ -140,7 +140,7 @@ class StudentIndex extends Component
     public function render()
     {
         $students = Student::with(['user', 'classroom'])
-            ->when($this->search, fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$this->search}%"))->orWhere('nis', 'like', "%{$this->search}%"))
+            ->when($this->search, fn ($q) => $q->where(fn ($sub) => $sub->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$this->search}%"))->orWhere('nis', 'like', "%{$this->search}%")))
             ->when($this->filterClassroom, fn ($q) => $q->where('classroom_id', $this->filterClassroom))
             ->latest()->paginate(10);
 

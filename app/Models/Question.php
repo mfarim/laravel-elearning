@@ -23,6 +23,11 @@ class Question extends Model
     'difficulty',
   ];
 
+  protected $hidden = [
+    'correct_answer',
+    'explanation',
+  ];
+
   protected function casts(): array
   {
     return [
