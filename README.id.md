@@ -3,11 +3,14 @@
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
 [![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?style=flat-square&logo=livewire&logoColor=white)](https://livewire.laravel.com)
 [![Java + React Version](https://img.shields.io/badge/Java_Spring_Boot_%2B_React-Tersedia-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://github.com/mfarim/spring-elearning-react)
+[![Python + React Version](https://img.shields.io/badge/Python_FastAPI_%2B_React-Tersedia-009688?style=flat-square&logo=fastapi&logoColor=white)](https://github.com/mfarim/fastapi-elearning-react)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 > 🇬🇧 [Read in English](README.md)
 >
 > ☕ **Mencari versi Java Spring Boot & React?** Versi decoupled/REST API modern yang dibangun dengan **Java 21, Spring Boot 3.4+, React 19, dan Tailwind CSS v4** tersedia di: [https://github.com/mfarim/spring-elearning-react](https://github.com/mfarim/spring-elearning-react)
+>
+> 🐍 **Mencari versi Python FastAPI & React?** Versi asinkron berperforma tinggi yang dibangun dengan **Python 3.12+, FastAPI, SQLAlchemy 2.0 (Async), React 19, dan Tailwind CSS v4** tersedia di: [https://github.com/mfarim/fastapi-elearning-react](https://github.com/mfarim/fastapi-elearning-react)
 
 Platform **E-Learning** dan **Computer Based Test (CBT)** berbasis web untuk manajemen pembelajaran antara **Admin**, **Guru**, dan **Siswa**. Dibangun menggunakan Laravel 13, Livewire 3, dan Laravel Reverb untuk fitur real-time.
 
