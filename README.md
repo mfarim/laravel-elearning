@@ -2,9 +2,12 @@
 
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
 [![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?style=flat-square&logo=livewire&logoColor=white)](https://livewire.laravel.com)
+[![Java + React Version](https://img.shields.io/badge/Java_Spring_Boot_%2B_React-Available-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://github.com/mfarim/spring-elearning-react)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 > 🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+>
+> ☕ **Looking for a Java Spring Boot & React edition?** A modern decoupled edition built with **Java 21, Spring Boot 3.4+, React 19, and Tailwind CSS v4** is available at: [https://github.com/mfarim/spring-elearning-react](https://github.com/mfarim/spring-elearning-react)
 
 A full-featured web-based **E-Learning** and **Computer Based Test (CBT)** platform for managing learning activities between **Admin**, **Teacher**, and **Student**. Built with Laravel 13, Livewire 3, and Laravel Reverb for real-time features.
 
