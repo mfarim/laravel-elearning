@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /images/
+Disallow: /admin/
+Disallow: /teacher/
+Disallow: /student/
+
+Sitemap: http://localhost:8000/sitemap.xml

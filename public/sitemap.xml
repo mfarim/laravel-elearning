@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    <url>
+        <loc>http://127.0.0.1:8000/</loc>
+        <lastmod>2026-10-04</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>http://127.0.0.1:8000/images/og-image.png</image:loc>
+            <image:title>Laravel E-Learning &amp; CBT Platform</image:title>
+            <image:caption>Platform E-Learning dan Computer Based Test (CBT) modern untuk sekolah.</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>http://127.0.0.1:8000/images/logo.png</image:loc>
+            <image:title>Laravel E-Learning Logo</image:title>
+        </image:image>
+    </url>
+    <url>
+        <loc>http://127.0.0.1:8000/login</loc>
+        <lastmod>2026-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>http://127.0.0.1:8000/images/og-image.png</image:loc>
+            <image:title>Login Laravel E-Learning &amp; CBT</image:title>
+        </image:image>
+    </url>
+</urlset>
