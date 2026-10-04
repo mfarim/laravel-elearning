@@ -4,8 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>{{ $title ?? 'Student' }} - Laravel E-Learning</title>
+  @include('partials.seo', [
+      'title' => $title ?? 'Student Panel',
+  ])
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @livewireStyles
 </head>
@@ -29,9 +30,12 @@
     {{-- Top Header --}}
     <div class="sticky top-0 z-40 bg-emerald-600 text-white px-4 py-3 shadow-md">
       <div class="flex items-center justify-between max-w-lg mx-auto">
-        <div>
-          <p class="text-sm opacity-80">Halo,</p>
-          <h1 class="text-lg font-bold leading-tight">{{ Auth::user()->name }}</h1>
+        <div class="flex items-center gap-3">
+          <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-9 h-9 rounded-xl object-cover shadow-sm bg-white/10 p-0.5">
+          <div>
+            <p class="text-xs opacity-80 leading-tight">Halo,</p>
+            <h1 class="text-base font-bold leading-tight">{{ Auth::user()->name }}</h1>
+          </div>
         </div>
         <div x-data="{ showLogout: false }" class="relative">
           <button @click="showLogout = true" class="p-2 rounded-full hover:bg-emerald-700">

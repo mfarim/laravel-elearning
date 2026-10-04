@@ -34,6 +34,14 @@ new #[Layout('layouts.guest')] class extends Component {
 }; ?>
 
 <div>
+    {{-- Mobile Logo --}}
+    <div class="lg:hidden flex justify-center mb-6">
+        <a href="/" class="flex items-center gap-3">
+            <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-12 h-12 rounded-2xl object-cover shadow-lg shadow-emerald-500/20">
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Laravel <span class="text-emerald-600">E-Learning</span></span>
+        </a>
+    </div>
+
     {{-- Header --}}
     <div class="text-center mb-8">
         <h2 class="text-2xl font-bold text-gray-900">Masuk ke Akun Anda</h2>
