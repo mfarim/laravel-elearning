@@ -4,15 +4,10 @@
 
 <div class="flex grow flex-col overflow-y-auto bg-gradient-to-b from-[#059669] to-[#065f46]">
   {{-- Logo --}}
-  <div class="flex h-16 items-center gap-3 px-5 border-b border-white/10">
-    <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-white/20">
-      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
-      </svg>
-    </div>
+  <a href="{{ route('teacher.dashboard') }}" class="flex h-16 items-center gap-3 px-5 border-b border-white/10 hover:bg-white/5 transition-colors">
+    <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-9 h-9 rounded-xl object-cover shadow-md shadow-black/20">
     <span class="text-lg font-bold text-white tracking-tight">Laravel E-Learning</span>
-  </div>
+  </a>
 
   <nav class="flex-1 px-3 py-4 space-y-6">
     {{-- Dashboard --}}

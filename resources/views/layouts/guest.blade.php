@@ -5,7 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Laravel E-Learning</title>
+    @include('partials.seo', [
+        'title' => 'Login',
+        'description' => 'Masuk ke portal Laravel E-Learning & CBT Platform untuk akses materi pembelajaran, tugas, dan ujian daring.',
+    ])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,14 +27,8 @@
             <div class="relative z-10 flex flex-col justify-between p-10 w-full">
                 {{-- Logo --}}
                 <a href="/" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
-                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm">
-                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
-                        </svg>
-                    </div>
-                    <span class="text-xl font-bold text-white">Laravel E-Learning</span>
+                    <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-10 h-10 rounded-xl object-cover shadow-md shadow-black/20">
+                    <span class="text-xl font-bold text-white tracking-tight">Laravel E-Learning</span>
                 </a>
 
                 {{-- Main Content --}}

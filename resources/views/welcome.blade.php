@@ -4,9 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel E-Learning — Platform Pembelajaran & Ujian Digital</title>
-    <meta name="description"
-        content="Platform Laravel E-Learning & Computer Based Test (CBT) modern untuk sekolah. Kelola pembelajaran, ujian, dan penilaian secara digital.">
+    @include('partials.seo', [
+        'title' => 'Platform Pembelajaran & Ujian CBT Digital',
+        'description' => 'Platform E-Learning dan Computer Based Test (CBT) modern untuk sekolah. Kelola pembelajaran, materi, tugas, ujian daring anti-cheat, dan penilaian secara digital.',
+    ])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
@@ -77,18 +78,11 @@
         class="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2.5">
-                    <div
-                        class="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-600 shadow-lg shadow-emerald-200">
-                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
-                        </svg>
-                    </div>
+                <a href="/" class="flex items-center gap-2.5">
+                    <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-9 h-9 rounded-xl object-cover shadow-lg shadow-emerald-500/20">
                     <span class="text-lg font-bold text-gray-900">Laravel <span
                             class="text-emerald-600">E-Learning</span></span>
-                </div>
+                </a>
                 <div class="hidden md:flex items-center gap-8">
                     <a href="#fitur"
                         class="text-sm font-medium text-gray-600 hover:text-emerald-600 transition">Fitur</a>
@@ -736,13 +730,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-2.5">
-                    <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-600">
-                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
-                        </svg>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="Laravel E-Learning" class="w-8 h-8 rounded-lg object-cover shadow-sm">
                     <span class="text-sm font-bold text-white">Laravel E-Learning</span>
                 </div>
                 <p class="text-sm">Laravel 12 · Livewire 3 · Tailwind CSS · Alpine.js</p>
